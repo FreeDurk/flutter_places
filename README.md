@@ -2,9 +2,8 @@
 
 # App Screenshots
 
-<img src="https://github.com/FreeDurk/flutter_travel_and_trips/assets/75711556/cffed1f7-7647-43f9-987d-4b0033659699" width=30% height=30%>
-<img src="https://github.com/FreeDurk/flutter_travel_and_trips/assets/75711556/a1a2198d-1056-4a85-acd2-e2d2205136c2" width=30% height=30%>
-<img src="https://github.com/FreeDurk/flutter_travel_and_trips/assets/75711556/c65da347-27dd-4ea6-b06a-94181461ab18" width=30% height=30%>
-<img src="https://github.com/FreeDurk/flutter_travel_and_trips/assets/75711556/51e61059-16bb-48b0-bf49-af81b881103f" width=30% height=30%>
-<img src="https://github.com/FreeDurk/flutter_travel_and_trips/assets/75711556/b0865208-0e57-446a-8e29-ed9d24937184" width=30% height=30%>
-
+<img src="https://github.com/FreeDurk/flutter_places/assets/75711556/f2b45eae-8667-460b-a8ce-9c58547fae1b" width=30% height=30%>
+<img src="https://github.com/FreeDurk/flutter_places/assets/75711556/31a68f08-a936-4883-b368-7a9191ca3d37" width=30% height=30%>
+<img src="https://github.com/FreeDurk/flutter_places/assets/75711556/05a9399a-d21b-4d60-a8f1-2184799455b5" width=30% height=30%>
+<img src="https://github.com/FreeDurk/flutter_places/assets/75711556/b494503f-67f9-42d4-873a-b24c023c946e" width=30% height=30%>
+<img src="https://github.com/FreeDurk/flutter_places/assets/75711556/4166e1b4-932f-49a6-b76e-3b78799531ca" width=30% height=30%>
