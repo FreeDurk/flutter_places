@@ -1,0 +1,119 @@
+workflows:
+  android-debug:
+    name: Android Debug
+    instance_type: mac_mini_m1
+    max_build_duration: 120
+    environment:
+      android_signing:
+        - debug-keystore
+      groups:
+        - trips
+      flutter: 3.10.6
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Pre-Build Setup
+        script: |
+          echo $ENV_FILE | base64 --decode > "$CM_BUILD_DIR/.env"
+          echo "Environment Variables DONE..."
+
+          echo "FIREBASE SETUP"
+          echo $FIREBASE_OPTIONS | base64 --decode > "$CM_BUILD_DIR/lib/firebase_options.dart"
+          echo "Firebase Options dart file DONE..."
+          echo $GOOGLE_SERVICES_JSON | base64 --decode > "$CM_BUILD_DIR/android/app/google-services.json"
+          echo "Google Services json file DONE..."
+
+      - name: Set up key.properties
+        script: |
+          cat >> "$CM_BUILD_DIR/android/key.properties" <<EOF
+          storePassword=$CM_KEYSTORE_PASSWORD
+          keyPassword=$CM_KEY_PASSWORD
+          keyAlias=$CM_KEY_ALIAS
+          storeFile=$CM_KEYSTORE_PATH
+          EOF
+      - name: Set up local.properties
+        script: |
+          echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
+
+      - name: Project Packages
+        script: |
+          flutter packages pub get
+      - name: Building APK
+        script: |
+          flutter build apk --debug
+      - name: Signing APK
+        script: |
+          apksigner sign --ks $CM_KEYSTORE_PATH --ks-key-alias $CM_KEY_ALIAS --ks-pass pass:$CM_KEYSTORE_PASSWORD --key-pass pass:$CM_KEY_PASSWORD --out $CM_BUILD_DIR/build/app/outputs/flutter-apk/app-debug-signed.apk $CM_BUILD_DIR/build/app/outputs/flutter-apk/app-debug.apk
+      - name: Verifying APK
+        script: |
+          apksigner verify --verbose --print-certs $CM_BUILD_DIR/build/app/outputs/flutter-apk/app-debug-signed.apk
+    artifacts:
+      - build/**/outputs/**/*.apk
+      - build/**/outputs/**/*.aab
+      - build/**/outputs/**/mapping.txt
+      - flutter_drive.log
+    publishing:
+      # See the following link for details about email publishing - https://docs.codemagic.io/publishing-yaml/distribution/#email
+      email:
+        recipients:
+          - freelance.durk@gmail.com
+        notify:
+          success: true # To not receive a notification when a build succeeds
+          failure: false # To not receive a notification when a build fails
+
+  android-release:
+    name: Android Release
+    instance_type: mac_mini_m1
+    max_build_duration: 120
+    environment:
+      android_signing:
+        - production-keystore
+      groups:
+        - trips
+      flutter: 3.10.6
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Setup Environment Variables
+        script: |
+          echo $ENV_FILE | base64 --decode > "$CM_BUILD_DIR/.env"
+      - name: Setup Firebase
+        script: |
+          echo $FIREBASE_OPTIONS | base64 --decode > "$CM_BUILD_DIR/lib/firebase_options.dart"
+          echo $GOOGLE_SERVICES_JSON | base64 --decode > "$CM_BUILD_DIR/android/app/google-services.json"
+      - name: Set up key.properties
+        script: |
+          cat >> "$CM_BUILD_DIR/android/key.properties" <<EOF
+          storePassword=$CM_KEYSTORE_PASSWORD
+          keyPassword=$CM_KEY_PASSWORD
+          keyAlias=$CM_KEY_ALIAS
+          storeFile=$CM_KEYSTORE_PATH
+          EOF
+      - name: Set up local.properties
+        script: |
+          echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
+      - name: Get Flutter packages
+        script: |
+          flutter packages pub get
+      - name: Building APK
+        script: |
+          flutter build apk --release
+      - name: Signing APK
+        script: |
+          apksigner sign --ks $CM_KEYSTORE_PATH --ks-key-alias $CM_KEY_ALIAS --ks-pass pass:$CM_KEYSTORE_PASSWORD --key-pass pass:$CM_KEY_PASSWORD --out $CM_BUILD_DIR/build/app/outputs/flutter-apk/app-release-signed.apk $CM_BUILD_DIR/build/app/outputs/flutter-apk/app-release.apk
+      - name: Verify APK
+        script: |
+          apksigner verify --verbose --print-certs $CM_BUILD_DIR/build/app/outputs/flutter-apk/app-release-signed.apk
+    artifacts:
+      - build/**/outputs/**/*.apk
+      - build/**/outputs/**/*.aab
+      - build/**/outputs/**/mapping.txt
+      - flutter_drive.log
+    publishing:
+      # See the following link for details about email publishing - https://docs.codemagic.io/publishing-yaml/distribution/#email
+      email:
+        recipients:
+          - freelance.durk@gmail.com
+        notify:
+          success: true # To not receive a notification when a build succeeds
+          failure: false # To not receive a notification when a build fails
